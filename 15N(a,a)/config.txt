@@ -1,0 +1,43 @@
+beamA		7.		#### beam mass (amu)
+beamZ		4.		#### beam proton number
+
+targetA		4.		### target mass (amu)
+targetZ		2.		### target proton number
+
+beamE		3.354		### incident beam energy (MeV), in lab frame
+sigma		0.00043		### s.d. of beam energy as fraction of beamE
+eloss		0.866		### total energy loss of beam, in lab frame, through target (MeV)
+sig_x		1.		### s.d. of beam in x axis (mm)
+sig_y		1.		### s.d. of beam in y axis (mm)
+
+targetP		20.0		### central target pressure (torr)
+
+targ_offset	7.125		### start of chamber beam axis offset relative to coordinate origin (cm), 7.125 for SONIK
+targ_len	37.0		### length of target in beam axis (cm)
+
+nLayers		2000		### number of target layers (more improves accuracy whilst compromising performance)
+n_ebin		1000		### number of energy bins per target layer
+
+colsize		10.		### width of detector colimator (mm)
+detAngle	55.		### angle of detector face relative to beam axis (deg)
+
+theta_min	30.		### lab frame angular limits of scattering in deg
+theta_max	40.
+n_theta		1000		### number of theta bins for cs calculation
+
+phi_min		-4.5		### scattering azmuth opening angle in deg
+phi_max		4.5
+n_phi		1000		### number of phi bins for cs calcuation
+
+z_min		19.		### scattering lab frame beam axis limits in cm
+z_max		21.
+
+#cx_type	rutherford	### defines the cross section type
+cx_type	resonance		### data given at regular cs and theta intervals, eg azure output
+#cx_type	resonance_exp	### data not given at regular cs and theta intervals, eg experimental data, cannot handle large data sets
+
+cx_file		7Be(a,a).dat	### cross section input: energy_com (MeV), angle_com (deg), cs_com (mb/sr)
+
+mcFactor	500.0		### Monte carlo factor, 1 is for 1 pnA (6.25e9 ions) of beam-on-target
+
+viewer		0		### GUI yes(1)/no(0)

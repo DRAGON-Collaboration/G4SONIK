@@ -1,0 +1,114 @@
+SONIK Scattering Simulation
+
+-Explained in the Appendix section of Charlie Akers' Thesis
+-Commences by generating a beam histogram through the target, and using the input cross section data it calulcates the number of scattering events
+-Creates a scattering distribution to get a weighted energy and angle(cm) for each generated scattering event
+-Kinematics are calculated by evaluating a histogram for a given theta(cm), this histogram is calculated at the beginning for a single energy(set to the beam energy at 20cm)
+-The Cross Section and Kinematics histograms are saved in the files CS.root and Kin.root
+
+-For each scattering event, GEANT4 will generate a recoil particle and then an ejectile particle
+-If a particle is detected it will fill the TotalDetector branch and the Recoil(or Ejectile)Detector Branch
+-It is possible to save data for every single generated event, but this is disabled to increase performance and save memory
+
+-To compile simulation use commands(in /local/astro/scat) { source env.sh } and the { make }
+-To run use command { scat config.dat SONIK.dat } or use the BASH Script to do multiple runs
+-Run settings are inputed from the config.dat and SONIK.dat text files
+
+-Source files are in directory src, corresponding headers in directory include
+-Some important files are:
+
+--scat.cc (in main directory)
+---Entry point of the application
+
+--CrossCalc.hxx (in src directory)
+---Calculates the cross section for a given angle and energy from the input cross section data data
+---Different CrossCalc(1 or 2).hxx are included in the src directory for different format of input cross section data
+---Input cross section is specified in the config.dat file
+
+--CrossSectionManager.cc
+---Generates beam histogram and calculates number of scattering events 
+---Generates CS.root and calls the kinematics manager to generate Kin.root as well
+---GenerateEvent() called by PrimaryActionGenerator to generate events details (angles, energies, positions) using kinematics manager
+
+--DetectorConstruction.cc
+---Constructs SONIK geometry for use by GEANT4
+---This can be viewed by enabling the GUI in config.dat (OpenGL errors are common(using X11), use software rendering)
+
+--InputManager.cc
+---Reads config.dat and SONIK.dat variables into a string map
+---Can be called to return individual variables
+
+--KinManager.cc
+---Generates kinematics histogram for a given energy
+---Is called with a given theta(cm) to evaluate histograms and return desired value(energy, lab angle)
+
+--PrimartyActionGenerator.cc
+---Calls CrossSectionManager to generate event position, energy, and direction and use G4ParticleGun to generate particles
+---Assigns values to Tree Manager to be filled if particle is detected
+
+--TrackerSD.cc
+---Processes detector hits, and calls TreeManager to fill corresponding branches
+
+--TreeManager.cc
+---ROOT file is created, filled, and written here
+
+
+#############################################################################################################################################################
+
+BASH Script sonik.sh
+
+-BASH Shell Script for running the SONIK scattering simulations
+-Place config.dat (with desired parameters), SONIK.dat, and 3He4He.dat in a directory
+-Script will correct SONIK.dat (col size, det angle, and theta range only) for each detector
+
+-HOWEVER, theta range (SNtm, and SNtM) must be modified here for different energies (recommend using CatKIN)
+-This theta refers to lab angle of recoil particle
+-Ignore recoils in theta range for detector angles larger than or equal to 90deg
+
+-Run the script from the energy folder (e.g. /local/astro/scat/SONIK_He3/0.5MeV)
+-Script will create directories 1mm, 2mm, 3mm ,5mm, 7mm
+-Each of those will have directories 22.5deg, 25deg, 35deg, 40deg, 45deg, 55deg, 60deg, 65deg, 75deg, 90deg, 120deg
+-Data file is Events0.root (specified in config.dat)
+-Compile using command { chmod +x sonik.sh }, and run using { ./sonik.sh } after having first compiled the scattering simulation
+
+
+#############################################################################################################################################################
+
+ROOT C++ Script rootscript2.C
+
+-ROOT C++ script for calculating the cross section based on simulation data
+-Compile in ROOT with the command { .L rootscript2.C+ } and run using { rootscipt2() }
+
+-Accesses data created by the script sonik.sh (directories 1mm, 2mm, etc. with directories 22.5deg, 25deg, 35deg, etc.)
+-Uses same function as scattering simulation (/local/astro/scat/src/CrossCalc.hxx) to get input cross section data to calculate ratio
+-Constants for nVol (atoms/cm^3) same as in scattering simulation (CrossSectionManager.cc and config.dat)
+-Observed target length z (used to get atoms/cm^2) obtained from ROOT Script detView.C
+
+
+#############################################################################################################################################################
+
+ROOT C++ Script detView.C 
+
+-ROOT C++ script for calculating based on geometry an effective z for each collimator, and angle setup
+-Compile in ROOT with the command { .L detView.C+ } and run using { detView() }
+
+-Integrates a weighing factor sigma(z) over z (between 19cm and 21cm) 
+-sigma(z) is the double integral of the visibility ratio of the collimator multiplied by the relative intensity of the beam over the x,y plane...
+-divided by the double intergal of the relative intensity of the beam over the x,y plane
+
+-Visibility ratio is calculated by the following proccess
+--Setup slit (4 vertices) and collimator (20 vertices and a center) with actual sizes and locations
+--A camera position x,y,z is specified
+--Entire setup is transformed to coordinates centered at the camera, with the z-axis now aligned between the camera and collimator center
+--A camera projection matrix is used to transform the scene to a 2D image from the camera's perspective
+---This can be viewed by commenting out the first return in the IonViewRatio function and running it indivually after compiling, IonViewRatio(x,y,z,colRadius(cm),angle(deg))
+--The 2D projection of the collimator is split into 400 pieces (20 divides radially, 20 divides angularly)
+---Each piece is checked if within slit (within slit if any ray originating from piece intersects slit lines an odd number of times)
+--Each visible piece area is summed up and divided by total area
+
+-Also takes into account how much larger(or smaller) the solid angle is at (x,y,z) than at (0,0,20) 
+
+-Relative intensity of the beam is a 2D Gaussian centered at x=0,y=0 with std deviations 1mm in both x and y (this is what is used in the simulation)
+
+-Program will print Collimator Diameter, Detector Angle, and effective z for all setups (Runtime ~5mins)
+

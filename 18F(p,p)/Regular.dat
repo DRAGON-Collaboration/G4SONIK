@@ -1,0 +1,14 @@
+GeomType	Regular		### Type of geometry (Regular or SONIK)
+
+colsize		3.		### width of detector colimator (mm)
+detAngle	30.		### angle of detector face relative to beam axis (deg)
+
+theta_min	28.		### lab frame angular limits of scattering in deg
+theta_max	34.
+
+phi_min		-6.5		### scattering azmuth opening angle in deg
+phi_max		6.5
+
+z_origin	-1.001.		### point on beam axis that detector points to (cm)
+z_min		-1.8		### scattering lab frame beam axis limits (cm)
+z_max		0.

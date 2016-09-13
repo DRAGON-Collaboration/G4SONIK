@@ -1,0 +1,35 @@
+beamA		3.		#### beam mass (amu)
+beamZ		2.		#### beam proton number
+
+targetA		4.		### target mass (amu)
+targetZ		2.		### target proton number
+
+beamE		1.04		### incident beam energy (MeV), in lab frame
+sigma		0.00043	        ### s.d. of beam energy as fraction of beamE
+eloss		0.472		### total energy loss of beam, in lab frame, through target (MeV)
+sig_x		1.		### s.d. of beam in x axis (mm)
+sig_y		1.		### s.d. of beam in y axis (mm)
+off_x		0.		### offset of beam in x axis (mm)            
+off_y		0.		### offset of beam in y axis (mm)
+
+targetP		4.98		### central target pressure (torr)
+
+Thres		0.01		### detector threshold (MeV)
+
+Events		Events0.root	### Root tree output file
+
+mcFactor	1000000		### Monte carlo factor, 1 is for 1 pnA (6.25e9 ions) of beam-on-target
+nLayers		1000		### number of target layers (more improves accuracy whilst compromising performance)
+n_ebin		1000		### number of energy bins per target layer
+n_theta		1000		### number of theta bins for cs calculation
+n_phi		1000		### number of phi bins for cs calcuation
+
+#cx_type	rutherford	### defines the cross section type, rutherford does not require data input file
+cx_type	resonance		### data given at regular cs and theta intervals, eg azure output
+#cx_type	resonance_exp	### data not given at regular cs and theta intervals, eg experimental data, cannot handle large data sets
+
+cx_file		3He(a,a)_abinitio.dat	### cross section data input file (energy (MeV), angle (degrees), crosssection (mb/sr)) in cm frame
+
+viewer		0		### GUI yes(1)/no(0), set to 0 if doing more than one run consecutivly
+
+

@@ -1,0 +1,132 @@
+#include "DetectorConstructionSONIK.hh"
+
+using namespace std;
+
+DetectorConstruction::DetectorConstruction(TreeManager* aTMgr, InputManager* aInMgr)
+ :  experimentalHall_log(0), tracker_log(0),
+    calorimeterBlock_log(0), calorimeterLayer_log(0),
+    experimentalHall_phys(0), calorimeterLayer_phys(0),
+    calorimeterBlock_phys(0), tracker_phys(0)
+{
+  TMgr = aTMgr;
+  InMgr = aInMgr;
+}
+
+DetectorConstruction::~DetectorConstruction() {
+
+}
+
+G4VPhysicalVolume* DetectorConstruction::Construct() {
+
+  //------------------------------------------------------ materials
+
+  G4double a;  // atomic mass
+  G4double z;  // atomic number
+  G4double density;
+  G4int nel;
+
+  G4Material* Al = new G4Material("Aluminum", z= 13., a= 26.98*g/mole, density= 2.7*g/cm3);
+
+  G4Material* Si = new G4Material("Silicon", z= 14., a= 28.085*g/mole, density= 2.3290*g/cm3);
+
+  double P;
+  int targetA, targetZ;
+
+  InMgr->GetVariable("targetP",P);//torr
+  InMgr->GetVariable("targetA",targetA);//target mass number
+  InMgr->GetVariable("targetZ",targetZ);//target atomic number
+
+  string targetType;
+
+  if      (targetZ == 2 && targetA == 4) targetType = "4He";
+  else if (targetZ == 2 && targetA == 3) targetType = "3He";
+  else if (targetZ == 1 && targetA == 1) targetType = "H";
+  else {
+    cerr << "Error in <DetectorConstruction::Construct>: Invalid target type" << endl;
+    exit(1);
+  }
+
+  const Double_t temp = 21.0;//K
+  const Double_t k = 1.3806e-23; // Boltzmann const J/k
+  const double AMU = 1.6605e-27;//kg
+
+  Double_t Nvol;
+
+  if (targetType == "4He" || targetType == "3He") Nvol = P*133.3/(k*(temp+273.15));//atom/m3
+  if (targetType == "H") Nvol = 2.*P*133.3/(k*(temp+273.15));//atom/m3
+
+  double targetDen = Nvol*targetA*AMU;//kg/m3
+
+  G4Material* Target = new G4Material("Target", targetZ, double(targetA)*g/mole, targetDen*kg/m3);
+
+  //------------------------------------------------------ volumes
+
+  //------------------------------ experimental hall (world volume)
+  //------------------------------ beam line along x axis
+
+  G4double expHall_x = 1.0*m;
+  G4double expHall_y = 1.0*m;
+  G4double expHall_z = 3.0*m;
+
+  G4Box* experimentalHall_box = new G4Box("expHall_box",expHall_x,expHall_y,expHall_z);
+
+  experimentalHall_log = new G4LogicalVolume(experimentalHall_box,Target,"expHall_log",0,0,0);
+
+  experimentalHall_phys = new G4PVPlacement(0,G4ThreeVector(),experimentalHall_log,"expHall",0,false,0);
+
+   //------------------------------ Aperture
+
+   G4double Aperture_Width = 5.0*mm;
+   G4double Aperture_Length = 5.0*mm;
+   G4double Aperture_Depth = 0.7*mm;
+   G4double Aperture_Diam = 5.0*mm;
+   //stupid setting so you can view arpertures in OGLI
+   G4double Aperture_Offset = 0.00*mm;
+//   G4double Aperture_Offset = 0.*mm;
+
+   G4ThreeVector Vect(0.,0.,0.);
+
+   G4Tubs* Aperture_Cyl = new G4Tubs("Aperture_Cyl",0.,Aperture_Diam/2.,Aperture_Depth/2.,0.,360.*deg);
+
+   G4Box* Aperture_Box = new G4Box("Aperture_Box",Aperture_Length/2.,Aperture_Width/2.,Aperture_Depth/2.);
+
+   G4UnionSolid* Aperture_Union = new G4UnionSolid("Aperture_Union", Aperture_Box, Aperture_Cyl,0,G4ThreeVector(Aperture_Length/2.+Aperture_Offset,0,0)); 
+
+   G4UnionSolid* Aperture_Union2 = new G4UnionSolid("Aperture_Union2", Aperture_Union, Aperture_Cyl,0,G4ThreeVector(-Aperture_Length/2.-Aperture_Offset,0,0)); 
+
+   G4LogicalVolume* Aperture_log = new G4LogicalVolume(Aperture_Union2,Target,"Aperture_Union2",0,0,0);
+
+   G4VisAttributes * ApertureVisAtt = new G4VisAttributes(G4Colour(1.,0.,0.));
+   ApertureVisAtt->SetForceSolid(true);
+   Aperture_log->SetVisAttributes(ApertureVisAtt);
+
+   //------------------------------ Si detectors
+
+   G4double Si_Diam = 24.*mm;
+   G4double Si_Depth = 10.*mm;
+
+   G4Tubs* Si_Cyl = new G4Tubs("Si_Cyl",0.,Si_Diam/2.,Si_Depth/2.,0.,360.*deg);
+
+   G4LogicalVolume* Si_log = new G4LogicalVolume(Si_Cyl,Si,"Si",0,0,0);
+
+   //------------------------------ Si colimators
+
+   double SiCol_Diam;
+   InMgr->GetVariable("colsize",SiCol_Diam);
+   SiCol_Diam *= mm;
+
+   G4double SiCol_Depth = 1.*mm;
+
+   G4Tubs* SiCol_Cyl = new G4Tubs("SiCol_Cyl",0.,SiCol_Diam/2.,SiCol_Depth/2.,0.,360.*deg);
+
+   G4LogicalVolume* SiCol_log = new G4LogicalVolume(SiCol_Cyl,Target,"SiCol_Cyl",0,0,0);
+
+
+   G4SDManager* SDman = G4SDManager::GetSDMpointer();
+   TrackerSD* aTrackerSD = new TrackerSD("Si", TMgr);
+   SDman->AddNewDetector(aTrackerSD);
+   Si_log->SetSensitiveDetector(aTrackerSD);
+
+  return experimentalHall_phys;
+}
+

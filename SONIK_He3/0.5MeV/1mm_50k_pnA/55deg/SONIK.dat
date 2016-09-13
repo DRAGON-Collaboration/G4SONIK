@@ -1,0 +1,14 @@
+GeomType	SONIK		### Type of geometry (Regular or SONIK)
+
+colsize		1.
+detAngle	55.
+
+theta_min	39.
+theta_max	47.
+
+phi_min		-3.5		### scattering azmuth opening angle in deg
+phi_max		3.5
+
+z_origin	20.		### point on beam axis that detector points to (cm)
+z_min		19.		### scattering lab frame beam axis limits (cm)
+z_max		21.

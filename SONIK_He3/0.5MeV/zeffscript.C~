@@ -1,0 +1,64 @@
+#include <iostream>
+
+#include <TObject.h>
+#include <TFile.h>
+#include <TTree.h>
+#include <TBranch.h>
+#include <TLeaf.h>
+#include <TH3F.h>
+#include <TH1.h>
+#include <TProfile2D.h>
+#include <TH2D.h>
+#include <TCanvas.h>
+#include <TString.h>
+
+void run()
+{
+	TFile *f = new TFile("/local/astro/scat/SONIK_He3/0.5MeV/1mm/22.5deg/Events0.root");
+	TTree *t = (TTree*)f->Get("Ejectile Detector Events");
+	TBranch *b = t->GetBranch("Events");
+	
+	static Float_t leafx;
+	static Float_t leafy;
+	static Float_t leafz;
+
+	Int_t nevents = (Int_t)b->GetEntries();
+
+	TLeaf *lx = b->GetLeaf("x");
+	TLeaf *ly = b->GetLeaf("y");
+	TLeaf *lz = b->GetLeaf("z");
+
+	lx->SetAddress(&leafx);
+	ly->SetAddress(&leafy);
+	lz->SetAddress(&leafz);
+
+	TH3F *h = new TH3F("XYZ Plot","XYZ Plot",100,-1.,1.,100,-1.,1.,40,19.,21.);
+
+	for (Int_t j=0;j<nevents;j++)
+	{
+		b->GetEntry(j);
+		h->Fill(leafx,leafy,leafz);
+	}
+
+	//TH2D *p;
+
+	Float_t Z = 0.;
+	//Float_t Zi = (21.-19.)/200;
+
+	for (Int_t j=100;j<101;j++)
+	{
+		//h->GetZaxis()->SetRange(j,j+1);
+		//h->Project3DProfile("xy")->ProjectionXY()->Draw();
+ 		//Z = Z + Zi*
+	}
+
+	cout << Z << endl;
+
+	h->Draw();
+	h->SetShowProjection("xy",1);	
+}
+
+
+
+
+

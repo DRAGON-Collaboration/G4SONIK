@@ -1,0 +1,454 @@
+#include <iostream>
+
+#include <TObject.h>
+#include <TH3D.h>
+#include <TGraph2D.h>
+#include <TProfile2D.h>
+#include <TH2D.h>
+#include <TCanvas.h>
+
+double IonViewRatio(double cameraX, double cameraY, double cameraZ, double colRadius, double thetadeg)
+{
+	/////////////////////////////////////////////////////////////////////////// SET SLIT AND COLLIMATOR
+
+	//const double colRadius = 0.35; //cm
+	const double pi = 3.14159265;
+	const int nvertices = 20;
+
+	const double slitWidth =  0.2; //cm
+	const double slitLength = 1.; //cm
+
+	double theta = thetadeg * pi / 180.;
+
+	double collimator[nvertices+1][3]; //x,y,z
+	double collimatorTemp[nvertices+1][3]; //for operations		
+
+	double phi;
+
+	for (int j = 0; j < 20; j++)
+	{
+		phi = j * 2 * pi / 20;
+		collimator[j][0] = colRadius * cos(phi);
+		collimator[j][1] = colRadius * sin(phi);
+		collimator[j][2] = 0.;
+	}
+	collimator[20][0] = 0.;
+	collimator[20][1] = 0.;
+	collimator[20][2] = 0.;		
+
+	double slit[4][3];
+	double slitTemp[4][3];
+	slit[0][0] = slitWidth / 2.;
+	slit[0][1] = slitLength / 2.;
+	slit[0][2] = 0.;
+	slit[1][0] = -slitWidth / 2.;
+	slit[1][1] = slitLength / 2.;
+	slit[1][2] = 0.;
+	slit[2][0] = -slitWidth / 2.;
+	slit[2][1] = -slitLength / 2.;
+	slit[2][2] = 0.;
+	slit[3][0] = slitWidth / 2.;
+	slit[3][1] = -slitLength / 2.;
+	slit[3][2] = 0.;
+	
+	double slitTranslate[3] = {0, 0, 6.1588};
+	double colTranslate[3] = {0, 0, 11.0 + 6.1588};
+
+	double RotateToPos[3][3] =  { {cos(theta), 0., -sin(theta)}, {0., 1., 0.}, {sin(theta), 0., cos(theta)} };
+	
+	for (int j = 0; j < 21; j++) { collimator[j][2] = collimator[j][2] + colTranslate[2]; }
+	for (int j = 0; j < 4; j++) { slit[j][2] = slit[j][2] + slitTranslate[2]; }
+
+	for (int j = 0; j < 21; j++)
+	{
+		for (int k = 0; k < 3; k++)
+		{
+			collimatorTemp[j][k] = collimator[j][0]*RotateToPos[0][k] + collimator[j][1]*RotateToPos[1][k] + collimator[j][2]*RotateToPos[2][k];
+		}
+		for (int k = 0; k < 3; k++)
+		{
+			collimator[j][k] = collimatorTemp[j][k];
+		}
+	}
+
+	for (int j = 0; j < 4; j++)
+	{
+		for (int k = 0; k < 3; k++)
+		{
+			slitTemp[j][k] = slit[j][0]*RotateToPos[0][k] + slit[j][1]*RotateToPos[1][k] + slit[j][2]*RotateToPos[2][k];
+		}
+		for (int k = 0; k < 3; k++)
+		{
+			slit[j][k] = slitTemp[j][k];
+		}
+	}
+	
+	for (int j = 0; j < 21; j++) { collimator[j][2] = collimator[j][2] + 20.; }
+	for (int j = 0; j < 4; j++) { slit[j][2] = slit[j][2] + 20.; }
+
+	/////////////////////////////////////////////////////////////////////////// SET CAMERA POSITION
+
+	double cameraPos[3] = {cameraX, cameraY, cameraZ};
+
+	/////////////////////////////////////////////////////////////////////////// TRANSFORM TO CAMERA CENTERED COORDINATES
+
+	for (int j = 0; j < 21; j++)
+	{
+		for (int k = 0; k < 3; k++)
+		{
+			collimator[j][k] = collimator[j][k] - cameraPos[k];
+		}
+	}
+
+	for (int j = 0; j < 4; j++)
+	{
+		for (int k = 0; k < 3; k++)
+		{
+			slit[j][k] = slit[j][k] - cameraPos[k];
+		}
+	}
+
+	double cameraPhi = (pi / 2) - atan( collimator[20][0] / collimator[20][1] ); 
+	double RotatePhi[3][3] =  { {cos(cameraPhi), sin(cameraPhi), 0.}, {-sin(cameraPhi), cos(cameraPhi), 0.}, {0., 0., 1.} };
+
+	for (int j = 0; j < 21; j++)
+	{
+		for (int k = 0; k < 3; k++)
+		{
+			collimatorTemp[j][k] = collimator[j][0]*RotatePhi[0][k] + collimator[j][1]*RotatePhi[1][k] + collimator[j][2]*RotatePhi[2][k];
+		}
+		for (int k = 0; k < 3; k++)
+		{
+			collimator[j][k] = collimatorTemp[j][k];
+		}
+	}
+
+	for (int j = 0; j < 4; j++)
+	{
+		for (int k = 0; k < 3; k++)
+		{
+			slitTemp[j][k] = slit[j][0]*RotatePhi[0][k] + slit[j][1]*RotatePhi[1][k] + slit[j][2]*RotatePhi[2][k];
+		}
+		for (int k = 0; k < 3; k++)
+		{
+			slit[j][k] = slitTemp[j][k];
+		}
+	}
+
+	double cameraTheta = -atan( (collimator[20][0]) / (collimator[20][2]) ); 
+	double RotateTheta[3][3] =  { {cos(cameraTheta), 0., -sin(cameraTheta)}, {0., 1., 0.}, {sin(cameraTheta), 0., cos(cameraTheta)} };
+
+	for (int j = 0; j < 21; j++)
+	{
+		for (int k = 0; k < 3; k++)
+		{
+			collimatorTemp[j][k] = collimator[j][0]*RotateTheta[0][k] + collimator[j][1]*RotateTheta[1][k] + collimator[j][2]*RotateTheta[2][k];
+		}
+		for (int k = 0; k < 3; k++)
+		{
+			collimator[j][k] = collimatorTemp[j][k];
+		}
+	}
+
+	for (int j = 0; j < 4; j++)
+	{
+		for (int k = 0; k < 3; k++)
+		{
+			slitTemp[j][k] = slit[j][0]*RotateTheta[0][k] + slit[j][1]*RotateTheta[1][k] + slit[j][2]*RotateTheta[2][k];
+		}
+		for (int k = 0; k < 3; k++)
+		{
+			slit[j][k] = slitTemp[j][k];
+		}
+	}
+
+	/////////////////////////////////////////////////////////////////////////// PROJECT TO 2 DIMENSIONAL IMAGE
+
+	double collimatorImageX[21];
+	double collimatorImageY[21];
+	double slitImageX[4];
+	double slitImageY[4];
+	
+	double cameraFocus = 1.;
+
+	for (int j = 0; j < 21; j++)
+	{
+		collimatorImageX[j] = (cameraFocus / collimator[j][2]) * collimator[j][0];
+		collimatorImageY[j] = (cameraFocus / collimator[j][2]) * collimator[j][1];
+	}
+
+	for (int j = 0; j < 4; j++)
+	{
+		slitImageX[j] = (cameraFocus / slit[j][2]) * slit[j][0];
+		slitImageY[j] = (cameraFocus / slit[j][2]) * slit[j][1];
+	}
+
+	/////////////////////////////////////////////////////////////////////////// FIND INTERSECTIONS
+
+	double p[4][2]; //p is first point on line, p+r is second
+	double r[4][2];
+	double q[20][2]; //p,r for slit, q,s for collimator
+	double s[20][2];
+
+	for (int j = 0; j < 4; j++)
+	{
+		int jj = j + 1;
+		if ( jj > 3 ) { jj = 0; }
+		p[j][0] = slitImageX[j];
+		p[j][1] = slitImageY[j];
+		r[j][0] = slitImageX[jj]-p[j][0];
+		r[j][1] = slitImageY[jj]-p[j][1];
+	}
+
+	for (int k = 0; k < 20; k++)
+	{
+		int kk = k + 1;
+		if (kk > 19 ) { kk = 0; }
+		q[k][0] = collimatorImageX[k];
+		q[k][1] = collimatorImageY[k];
+		s[k][0] = collimatorImageX[kk]-q[k][0];
+		s[k][1] = collimatorImageY[kk]-q[k][1];		
+	}
+
+	double timeIntersection[4][20][2]; //slit lines, collimator lines, slit time and collimator time  
+
+	for (int j = 0; j < 4; j++)
+	{
+		for (int k = 0; k < 20; k++)
+		{
+			double v[2] = { q[k][0]-p[j][0], q[k][1]-p[j][1] };			
+			timeIntersection[j][k][0] = (v[0]*s[k][1] - v[1]*s[k][0]) / (r[j][0]*s[k][1] - r[j][1]*s[k][0]);
+			timeIntersection[j][k][1] = (v[0]*r[j][1] - v[1]*r[j][0]) / (r[j][0]*s[k][1] - r[j][1]*s[k][0]);	
+			
+			/*if (j == 0 && k == 14) 
+			{
+				cout << q[j][0]-p[k][0] << "  " <<  q[j][1]-p[k][1] << "  " << r[j][0]*s[k][1] << "  " << r[j][1]*s[k][0] << endl;
+			}*/	
+		}
+	}
+
+	/////////////////////////////////////////////////////////////////////////// FIND GOOD INTERSECTIONS
+
+	int count = 0;
+	int indexIntersection[2][2];
+	for (int j = 0; j < 4; j++)
+	{
+		for (int k = 0; k < 20 && count < 2; k++)
+		{
+			if (timeIntersection[j][k][0] >= 0. && timeIntersection[j][k][0] <= 1.)
+			{
+				if (timeIntersection[j][k][1] >= 0. && timeIntersection[j][k][1] <= 1.)
+				{
+					indexIntersection[count][0] = j;
+					indexIntersection[count][1] = k;
+					count++;
+				}
+			}		
+		}
+	}
+
+	/////////////////////////////////////////////////////////////////////////// DETERMINE POINTS WITHIN SLIT
+
+	double s2[20][2];
+	for (int k = 0; k < 20; k++)
+	{
+		s2[k][0] = collimatorImageX[k];
+		s2[k][1] = collimatorImageY[k];		
+	}
+
+	double timeIntersection2[4][20][2]; //slit lines, collimator lines, slit time and collimator time  
+
+	for (int j = 0; j < 4; j++)
+	{
+		for (int k = 0; k < 20; k++)
+		{			
+			timeIntersection2[j][k][0] = (-p[j][0]*s2[k][1] + p[j][1]*s2[k][0]) / (r[j][0]*s2[k][1] - r[j][1]*s2[k][0]);
+			timeIntersection2[j][k][1] = (-p[j][0]*r[j][1] + p[j][1]*r[j][0]) / (r[j][0]*s2[k][1] - r[j][1]*s2[k][0]);	
+		}
+	}
+
+	int indexIntersection2[20];
+	int count2 = 0;
+	for (int k = 0; k < 20; k++)
+	{
+		indexIntersection2[k] = 0;
+		for (int j = 0; j < 4; j++)
+		{
+			if (timeIntersection2[j][k][0] >= 0. && timeIntersection2[j][k][0] <= 1. && timeIntersection2[j][k][1] >= 1.)
+			{
+				indexIntersection2[k]++;
+				if (indexIntersection2[k] % 2 == 0)
+				{
+					count2--;
+				}
+				else
+				{
+					count2++;
+				}
+			}		
+		}
+		//cout << indexIntersection2[k] << "  " << count2 << endl;
+	}
+
+	/////////////////////////////////////////////////////////////////////////// CALCULATE AREA AND RATIO
+
+	double AreaRatio;
+
+	if (count == 2)
+	{
+		double VisibleArea = 0.;
+		double TotalArea = 0.;
+			
+		double posIntersection[3][2];
+
+		double time = timeIntersection[indexIntersection[0][0]][indexIntersection[0][1]][0];
+		posIntersection[0][0] = p[indexIntersection[0][0]][0] + time*r[indexIntersection[0][0]][0];
+		posIntersection[0][1] = p[indexIntersection[0][0]][1] + time*r[indexIntersection[0][0]][1];
+
+		time = timeIntersection[indexIntersection[1][0]][indexIntersection[1][1]][0];
+		posIntersection[1][0] = p[indexIntersection[1][0]][0] + time*r[indexIntersection[1][0]][0];
+		posIntersection[1][1] = p[indexIntersection[1][0]][1] + time*r[indexIntersection[1][0]][1];
+
+		posIntersection[2][0] = (posIntersection[0][0] + posIntersection[1][0]) / 2.;
+		posIntersection[2][1] = (posIntersection[0][1] + posIntersection[1][1]) / 2.;
+
+		int intx = 2;
+
+		for (int k = 0; k < 20; k++)
+		{
+			if (indexIntersection2[k] % 2 != 0)
+			{
+				double dmid = sqrt(pow(collimatorImageX[k]-posIntersection[2][0], 2) +  pow(collimatorImageY[k]-posIntersection[2][1], 2));
+				double dint0 = sqrt(pow(collimatorImageX[k]-posIntersection[0][0], 2) + pow(collimatorImageY[k]-posIntersection[0][1], 2));
+				double dint1 = sqrt(pow(collimatorImageX[k]-posIntersection[1][0], 2) + pow(collimatorImageY[k]-posIntersection[1][1], 2));
+				double dprev = sqrt(pow(collimatorImageX[k]-collimatorImageX[(k-1)%20], 2) + pow(collimatorImageY[k]-collimatorImageY[(k-1)%20], 2));
+				if (dint0 < dint1 && dint0 < dprev)
+				{
+					VisibleArea = VisibleArea + (dint0*dmid/2.);
+					intx = 0;
+				}
+				else if (dint1 < dint0 && dint1 < dprev)
+				{
+					VisibleArea = VisibleArea + (dint1*dmid/2.);
+					intx = 1;
+				}
+				else if (dprev < dint0 && dprev < dint1)
+				{
+					VisibleArea = VisibleArea + (dprev*dmid/2.);
+				}
+			}
+		}
+	
+		if (intx != 2)
+		{
+			double dintx = 9999;
+			double dmidx = sqrt(pow(posIntersection[intx][0]-posIntersection[2][0], 2)+pow(posIntersection[intx][0]-posIntersection[2][1], 2));
+			for (int k = 0; k < 20; k++)
+			{
+				if (indexIntersection2[k] % 2 != 0)
+				{
+					double dintxx = sqrt(pow(collimatorImageX[k]-posIntersection[intx][0],2)+pow(collimatorImageY[k]-posIntersection[intx][1],2));
+					if (dintxx < dintx)
+					{
+						dintx = dintxx;
+					}
+				}
+			}
+			if (dintx != 9999)
+			{
+				VisibleArea = VisibleArea + (dintx*dmidx/2.);
+			}
+		}
+
+		for (int k = 0; k < 20; k++)
+		{
+			double dmid = sqrt(pow(collimatorImageX[k]-collimatorImageX[20], 2) +  pow(collimatorImageY[k]-collimatorImageY[20], 2));
+			double dprev = sqrt(pow(collimatorImageX[k]-collimatorImageX[(k-1)%20],2) + pow(collimatorImageY[k]-collimatorImageY[(k-1)%20],2));
+			TotalArea = TotalArea + (dmid*dprev/2.);	
+		}
+		AreaRatio = VisibleArea / TotalArea;
+	}
+	else if (count2 == 0)
+	{
+		AreaRatio = 0.;
+	}
+	else
+	{
+		AreaRatio = 1.;
+	}
+
+	return AreaRatio;
+	//cout << "The ration of visible to total area is: " << AreaRatio << endl;
+
+	/////////////////////////////////////////////////////////////////////////// DRAW 2 DIMENSIONAL IMAGE
+
+	/*double ImageX[25];
+	double ImageY[25];
+	
+	for (int j = 0; j < 21; j++)
+	{
+		ImageX[j] = collimatorImageX[j];
+		ImageY[j] = collimatorImageY[j];
+	}
+
+	for (int j = 0; j < 4; j++)
+	{
+		ImageX[j+21] = slitImageX[j];
+		ImageY[j+21] = slitImageY[j];
+	}
+
+	for (int j = 0; j < 25; j++)
+	{
+		cout << ImageX[j] << "  " << ImageY[j] << endl;
+	}
+
+	//TCanvas *c1 = new TCanvas("c1","Ion's Eye View", 1);
+
+	TGraph *g = new TGraph(25, ImageY, ImageX);
+	g->SetMarkerColor(6);
+	g->SetMarkerStyle(21);
+	g->SetTitle("Ion's Eye View");
+	//g->GetYaxis()->SetRangeUser(-1.,1.);
+	//g->GetXaxis()->SetRangeUser(-1.,1.);
+	g->Draw("ALP");
+
+	//c1->Update();
+
+	//return g;
+
+	return AreaRatio;*/
+}
+
+double BeamGauss(double x, double y)
+{
+	const double sigmaxy = 	0.1; //cm
+	double f = exp(-( (pow(x/sigmaxy,2)/2.) + (pow(y/sigmaxy,2)/2.) ) );
+	return f;
+}
+
+void run(double col, double deg, double z)
+{
+	int xybins = 40;
+	int i = 0;
+
+	TGraph2D *g = new  TGraph2D();
+	double XYi = (2.) / xybins;
+
+	for (int j = 0; j < xybins; j++)
+	{
+		double x = -1. + (j * XYi);
+		for (int k = 0; k < xybins; k++)
+		{
+			double y = -1. + (k * XYi);
+
+			double f = IonViewRatio(x,y,z,col/20.,deg) * BeamGauss(x,y);	
+			if (BeamGauss(x,y) > 0.05) { f = f / BeamGauss(x,y); }			
+
+			g->SetPoint( i, x, y,f);
+			i++;
+		}
+	}
+
+	g->Draw("TRI2");
+
+}

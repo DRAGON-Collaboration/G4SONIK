@@ -1,0 +1,86 @@
+### Changelog for the SONIK Scattering Simulation
+### Original source files in /local/astro/scat/src(original) and ../include(original)
+
+
+2015-08-05 Arthur Firmino <firmino@ualberta.ca>
+
+    * Successfully recreated all 13 detectors around Observation Point 3. In DetectorConstruction.cc
+
+    * Changed data file structure to accomodate all 13 detectors, currently does not record ejectiles and recoils separately. In TreeManager.cc
+
+
+2015-07-31 Arthur Firmino <firmino@ualberta.ca>
+
+	* Forced to find a better way to construct geometry due to overuse of Union Solids causing particle navigation to be too computationally costly.
+
+
+2015-07-30 Arthur Firmino <firmino@ualberta.ca>
+
+	* Recreated entire set of "Spikes" and detectors around Observation Point 3. In DetectorConstruction.cc
+
+	* Added member in TrackerSD.cc to distinguish detectors when calling TreeManager.cc
+
+
+2015-07-29 Arthur Firmino <firmino@ualberta.ca>
+
+    * Decided Scattering Simulation would benefit from having it's full geometry depicted, such that all angles could be covered by a single run, began to recreate "entire" geometry
+
+
+2015-07-28 Arthur Firmino <firmino@ualberta.ca>
+
+	* Added a detector resolution of ~20KeV FWHM to match our actual detector resolution in the lab. In TrackerSD.cc 12-16, 53
+
+    ^-UPDATE: Shows good agreement with actual lab results
+
+
+2015-07-03 Arthur Firmino <firmino@ualberta.ca>
+
+	* Removed some commented out / unused code to avoid confusion
+
+	* Changed cross section filenames from 3He4He.dat to 3He(a,a)_abinitio.dat and 3He4He(2).dat to 3He(a,a)_rmatrix.dat in /local/astro/scat/ directory
+
+
+2015-06-29 Arthur Firmino <firmino@ualberta.ca>
+
+	* Added error message and exit if illegal theta range chosen (Rcl_Theta_lab > 90). In CrossSectionManager.cc 208-211
+
+
+2015-06-23 Arthur Firmino <firmino@ualberta.ca>
+
+	* Fixed integer overflow of pdone (percent completed) in CrossSectionManager.cc
+
+	* Larger than expected number of counts for the 120 degree angle seems to be due to multiple scattering of ions initially not in the direction of the detector, likely explanation due to the low ejectile energy at this angle
+
+
+2015-06-22 Arthur Firmino <firmino@ualberta.ca>
+
+	* Started this changelog, filled in major changes made prior to this date since inheriting the code
+
+	* Changed lines I lazily left hardcoded for 3He Alpha run to general cases in TrackerSD.cc
+
+	* Added a beam x_offset and y_offset in CrossSectionManager.cc, new variable in config.dat file is off_x and off_y and must be present else an error will occur
+
+	* At this time simulation is being run for high statistics and many elements have been commented out for performance, these elements include the recoil particle being simulated, saving of data with the exception of the Recoil Only Detector
+
+	* Changed some variable names to be more consistent accross all files, naming convention "particle_quanity_type" (e.g. Rcl_theta_lab), wherever the variable is the same (or only exists for one) for all types and/or particles, those shall be ommitted (e.g. theta_cm, Rcl_vect, Ejc_vect, phi)
+
+	* Removed some unused/redundant variables
+
+
+2015-05-04 to 2015-06-19 (rougly) Arthur Firmino <firmino@ualberta.ca>
+
+	* Original source files were copied to src(original), include(original) before any changes
+
+	* Directories src(copy2), and include(copy2) are the renamed protected directories, renamed to get around read-only protection
+
+	* Configured program to simulate both the recoil(target before collision), and the ejectile(beam before collision) particles
+
+	* Angle Phi of ejectile particle is set to be equal to that of the recoil particle such that it is still only necessary to simulate a small Phi range (in the direction of the detector) rather than the full 360 degrees
+
+	* Redid Tree Manager format to include ejectile particle and keep useful data, as well as having a total detector, an ejectile only detector, and a recoil only detector
+
+	* Fixed some bugs associated with the changes, confirmed that kinematics agreed with CatKIN
+
+	* Made a copy of src/CrossCalc.hxx and modified it for a different cross section file format, src/CrossCalc(1).hxx is original, src/CrossCalc(2).hxx is modified, and src/CrossCalc.hxx is active (currently src/CrossCalc(1).hxx)
+	
+	* Added an "Estimated time to completion" line in program, useful for long runs

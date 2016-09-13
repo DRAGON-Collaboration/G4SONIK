@@ -1,0 +1,26 @@
+##G4.PRIM-FORMAT-2.4
+/BoundingBox       -3316.62479       -3316.62479       -3316.62479        3316.62479        3316.62479        3316.62479
+!SetCamera
+!OpenDevice
+!BeginModeling
+#--------------------
+#/PVName     expHall.0
+/ColorRGB                 1                 1                 1
+/ForceWireframe  0
+/Origin                 0                 0                 0
+/BaseVector                 1                 0                 0                 0                 1                 0
+/Box              1000              1000              3000
+#--------------------
+#/PVName          MainCyl.0
+/Ndiv  24
+/ColorRGB                 1                 1                 1
+/ForceWireframe  0
+/Origin                 0                 0            256.25
+/BaseVector                 1                 0                 0                 0                 1                 0
+/Tubs                 0                15               185                 0        6.28318531
+#--------------------
+#/PVName          Aperture.0
+#--------------------
+!EndModeling
+!DrawAll
+!CloseDevice
