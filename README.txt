@@ -10,6 +10,16 @@ SONIK Scattering Simulation
 
 #################################################################################################################################################################
 
+Compile on your machine: 
+
+- To compile on your machine first copy .bashrcSegment into your .bashrc file, making sure the directory paths to root and geant4 simulation match that of your machine.
+- Then delete GNUmakefile, this is no longer needed.
+- Enter the following command: cmake -DGeant4_DIR=/path/To/geant4.9.6.p04 /path/To/scat-master
+- Then compile with make.
+
+
+#################################################################################################################################################################
+
 -Explained in the Appendix section of Charlie Akers' Thesis
 -Commences by generating a beam histogram through the target, and using the input cross section data it calulcates the number of scattering events
 -Creates a scattering distribution to get a weighted energy and angle(cm) for each generated scattering event
