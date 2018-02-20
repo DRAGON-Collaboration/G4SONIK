@@ -35,7 +35,7 @@ void InputManager::ReadFile(const char* filename) {
 
     for(int i=line.size()-1; i >0; --i) { // get rid of duplicate spaces
       if(line[i] == ' ' && line[i-1] == ' ')
-	line.erase(i,1);
+        line.erase(i,1);
     }
     if(line.size() <= 1) continue; // empty line
     if(line.find(" ") > line.size()) { // no break for option to be specified
@@ -56,4 +56,3 @@ void InputManager::ReadFile(const char* filename) {
   ifs.close();
 
 }
-

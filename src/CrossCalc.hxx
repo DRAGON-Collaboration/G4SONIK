@@ -7,7 +7,7 @@
 /// A class to facilitate calculation of resonant cross sections using interpolation.
 /// We are provided with cross section data at specific cm energies and angles, and want
 /// to calculate cross sections in between those points. The method used here is to use two
-/// spline interpolations, with the calculation handled by ROOT's TGraph::Eval() method. 
+/// spline interpolations, with the calculation handled by ROOT's TGraph::Eval() method.
 class ResonanceCalculator
 {
 private:
@@ -39,27 +39,27 @@ public:
       double energy, angle, cross;
       std::map<Double_t, TGraph*>::iterator it;
       while(1) {
-	ifs >> energy >> angle >> cross;
-//        cout << energy << "\t" << angle << "\t" << cross << endl;
-	if(!ifs.good()) break;
+        ifs >> energy >> angle >> cross;
+        //        cout << energy << "\t" << angle << "\t" << cross << endl;
+        if(!ifs.good()) break;
 
-	it = energyGraphs.find(energy);
-	if(it == energyGraphs.end()) {
-	  energyGraphs.insert(std::make_pair(energy, new TGraph()));
-	  energyGraphs[energy]->SetPoint(0, angle, cross);
-	} else {
-	  int nnn = energyGraphs[energy]->GetN();
-	  energyGraphs[energy]->SetPoint(nnn, angle, cross);
-	}
+        it = energyGraphs.find(energy);
+        if(it == energyGraphs.end()) {
+          energyGraphs.insert(std::make_pair(energy, new TGraph()));
+          energyGraphs[energy]->SetPoint(0, angle, cross);
+        } else {
+          int nnn = energyGraphs[energy]->GetN();
+          energyGraphs[energy]->SetPoint(nnn, angle, cross);
+        }
 
-	it = angleGraphs.find(angle);
-	if(it == angleGraphs.end()) {
-	  angleGraphs.insert(std::make_pair(angle, new TGraph()));
-	  angleGraphs[angle]->SetPoint(0, energy, cross);
-	} else {
-	  int nnn = angleGraphs[angle]->GetN();
-	  angleGraphs[angle]->SetPoint(nnn, energy, cross);
-	}
+        it = angleGraphs.find(angle);
+        if(it == angleGraphs.end()) {
+          angleGraphs.insert(std::make_pair(angle, new TGraph()));
+          angleGraphs[angle]->SetPoint(0, energy, cross);
+        } else {
+          int nnn = angleGraphs[angle]->GetN();
+          angleGraphs[angle]->SetPoint(nnn, energy, cross);
+        }
       }
       ifs.close();
     }

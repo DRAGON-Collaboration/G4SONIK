@@ -62,17 +62,17 @@ TreeManager::~TreeManager() {
 void TreeManager::DetRclEvent(const char* aDetAngle) {
   dataX = data0;
   const char* DetAngles[13] = {"22.5","25","30","35","40","45","55","60","65","75","90","120","135"};
-  for (int i=0;i<13;i++) { if (aDetAngle==DetAngles[i]) { 
-    tree_TotalDetector[i]->Fill(); 
-    tree_RecoilDetector[i]->Fill(); } }
+  for (int i=0;i<13;i++) { if (aDetAngle==DetAngles[i]) {
+      tree_TotalDetector[i]->Fill();
+      tree_RecoilDetector[i]->Fill(); } }
 }
 
 void TreeManager::DetEjcEvent(const char* aDetAngle) {
   dataX = data1;
   const char* DetAngles[13] = {"22.5","25","30","35","40","45","55","60","65","75","90","120","135"};
-  for (int i=0;i<13;i++) { if (aDetAngle==DetAngles[i]) { 
-    tree_TotalDetector[i]->Fill(); 
-    tree_EjectileDetector[i]->Fill(); } }
+  for (int i=0;i<13;i++) { if (aDetAngle==DetAngles[i]) {
+      tree_TotalDetector[i]->Fill();
+      tree_EjectileDetector[i]->Fill(); } }
 }
 
 
@@ -115,7 +115,7 @@ void TreeManager::Set0E_beam(double E_beam) {
   data0.E_beam = E_beam;
 }
 
-//////////////////////////////////////////////////////////////////// 
+////////////////////////////////////////////////////////////////////
 
 void TreeManager::Set1E_dep(double E_dep) {
   data1.E_dep = E_dep;
@@ -152,4 +152,3 @@ void TreeManager::Set1z(double z) {
 void TreeManager::Set1E_beam(double E_beam) {
   data1.E_beam = E_beam;
 }
-

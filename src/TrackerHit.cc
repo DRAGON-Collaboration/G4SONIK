@@ -1,4 +1,3 @@
-
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -53,8 +52,7 @@ G4int TrackerHit::operator==(const TrackerHit& right) const
 void TrackerHit::Draw()
 {
   G4VVisManager* pVVisManager = G4VVisManager::GetConcreteInstance();
-  if(pVVisManager)
-  {
+  if(pVVisManager){
     G4Circle circle(pos);
     circle.SetScreenSize(2.);
     circle.SetFillStyle(G4Circle::filled);
@@ -71,8 +69,7 @@ void TrackerHit::Print()
 {
   G4cout << "  trackID: " << trackID << "  chamberNb: " << chamberNb
          << "  energy deposit: " << G4BestUnit(edep,"Energy")
-	 << "  position: " << G4BestUnit(pos,"Length") << G4endl;
+         << "  position: " << G4BestUnit(pos,"Length") << G4endl;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-

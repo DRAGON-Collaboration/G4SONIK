@@ -15,7 +15,7 @@ ResultsManager::~ResultsManager() {
 }
 
 void ResultsManager::CreateTable() {
-  
+
   std::string tablename;
   InMgr->GetVariable("Table",tablename);
 
@@ -51,7 +51,7 @@ void ResultsManager::CreateTable() {
 
   std::cout << ObsPoint_E << "	" << pna << "	" << targetPres << "	" << targetTemp << "	" << colSize << "\n \n";
   table << ObsPoint_E << "	" << pna << "	" << targetPres << "	" << targetTemp << "	" << colSize << "\n \n";
- 
+
   std::string header2 = "Angle	Total	Error	Recoils	Error	Ejectiles	Error	\n";
   std::cout << header2;
   table << header2;
@@ -75,21 +75,20 @@ void ResultsManager::CreateTable() {
     Rcl = t->GetEntries();
     errRcl = (int) Rcl / sqrt(Rcl);
     if (Rcl<=0) {Rcl=0, errRcl=0;}
-  
+
     string ejcStr = "Ejectiles_ONLY/Ejectiles_ONLY_angle_";
     ejcStr.append(DetAngles[i]);
     t = (TTree*)f->Get(ejcStr.c_str());
     Ejc = t->GetEntries();
     errEjc = (int) Ejc / sqrt(Ejc);
     if (Ejc<=0) {Ejc=0, errEjc=0;}
-    
+
     if (i==0) {
-    std::cout << 22.5 << "	" << Tot << "	" << errTot << "	" << Rcl << "	" << errRcl << "	" << Ejc << "	" << errEjc << endl;
-    table << 22.5 << "	" << Tot << "	" << errTot << "	" << Rcl << "	" << errRcl << "	" << Ejc << "	" << errEjc << "\n";
-    }
-    else {
-    std::cout << DetAngles[i] << "	" << Tot << "	" << errTot << "	" << Rcl << "	" << errRcl << "	" << Ejc << "	" << errEjc << endl;
-    table << DetAngles[i] << "	" << Tot << "	" << errTot << "	" << Rcl << "	" << errRcl << "	" << Ejc << "	" << errEjc << "\n";
+      std::cout << 22.5 << "	" << Tot << "	" << errTot << "	" << Rcl << "	" << errRcl << "	" << Ejc << "	" << errEjc << endl;
+      table << 22.5 << "	" << Tot << "	" << errTot << "	" << Rcl << "	" << errRcl << "	" << Ejc << "	" << errEjc << "\n";
+    } else {
+      std::cout << DetAngles[i] << "	" << Tot << "	" << errTot << "	" << Rcl << "	" << errRcl << "	" << Ejc << "	" << errEjc << endl;
+      table << DetAngles[i] << "	" << Tot << "	" << errTot << "	" << Rcl << "	" << errRcl << "	" << Ejc << "	" << errEjc << "\n";
     }
 
   }

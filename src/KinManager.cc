@@ -62,7 +62,7 @@ KinManager::KinManager(double n_a, double n_A) {
 //Rcl_E_lab = E_B
 
 void KinManager::SetEbeam(double E_a) {
-  
+
   double const pi = 3.14159;
   double E_b1, E_b2, min;
 
@@ -118,12 +118,12 @@ void KinManager::SetEbeam(double E_a) {
 
     double phi = TMath::ASin(pow(2*m_a*E_b,0.5)*sin(theta)/pow(2*m_A*E_B,0.5));
 
-//    double phi = (3.14159-theta_cm)/2.;
-/*
-    theta = pow(2*m_a*E_a,0.5) - pow(2*m_A*E_B,0.5)*cos(phi);
-    theta = theta/pow(2*m_a*E_b,0.5);
-    theta = TMath::ACos(theta);
-*/
+    //    double phi = (3.14159-theta_cm)/2.;
+    /*
+      theta = pow(2*m_a*E_a,0.5) - pow(2*m_A*E_B,0.5)*cos(phi);
+      theta = theta/pow(2*m_a*E_b,0.5);
+      theta = TMath::ACos(theta);
+    */
 
     g_theta->SetPoint(i,theta_cm,theta);
     g_phi->SetPoint(i,theta_cm,phi);

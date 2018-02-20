@@ -14,24 +14,24 @@ class ResonanceCalculator;
 // Constants
 namespace {
   const Double_t amuSI = 1.6726e-27;//kg
-//  const Double_t amu = 931.494;
+  //  const Double_t amu = 931.494;
   const Double_t clight = 2.99792458E+10; // cm/sec
   const Double_t avo = 6.022e+23; // molecules per mole
   const Double_t Coul = 1.602176E-19; // Coulombs
   const Double_t perm = 8.854188e-12; //SI
-// Central temperature (Centigrade)
-//  const Double_t temp = 21.0;
-// Gas constant (L.atm/mol.K)
-//  const Double_t R = 0.08206;
-// Loschmidt constant
+  // Central temperature (Centigrade)
+  //  const Double_t temp = 21.0;
+  // Gas constant (L.atm/mol.K)
+  //  const Double_t R = 0.08206;
+  // Loschmidt constant
   const Double_t Losch = 2.6867805e19; //cm^-3
-//polar angle of beam in zx plane (rad)
+  //polar angle of beam in zx plane (rad)
   const Double_t beam_thetax = 0. * 1.e-3;
-//polar angle of beam in zy plane (rad)
+  //polar angle of beam in zy plane (rad)
   const Double_t beam_thetay = 0. * 1.e-3;
 }
 
-CrossSectionManager::CrossSectionManager(InputManager* aInMgr) { 
+CrossSectionManager::CrossSectionManager(InputManager* aInMgr) {
 
   InMgr = aInMgr;
   CSfile = new TFile("CS.root","RECREATE");
@@ -74,8 +74,8 @@ void CrossSectionManager::GenerateCrossSection() {
 
   string targetType;
   double P/*torr*/, temp/*°C*/,Nvol/*atom/cm3*/;
-	int nu;
-	InMgr->GetVariable("targetTemp",temp);
+  int nu;
+  InMgr->GetVariable("targetTemp",temp);
   InMgr->GetVariable("targetP",P);
 
   if      (z[TARGET] == 2 && a[TARGET] == 4) targetType = "4He";
@@ -87,20 +87,20 @@ void CrossSectionManager::GenerateCrossSection() {
   }
 
   if (targetType == "H") nu = 2;
-	else nu = 1;
+  else nu = 1;
 
-	Nvol = nu*Losch*(P / 760)*(273.15 / (temp+273.15) );
+  Nvol = nu*Losch*(P / 760)*(273.15 / (temp+273.15) );
 
   string GeomType;
   InMgr->GetVariable("GeomType",GeomType);
 
   if (GeomType == "Regular") TargetLength = 12.3;//cm
   if (GeomType == "SONIK" ){
-		TargetLength = 37;//cm
-		// if (targetType == "H") TargetLength = 21.2776;//cm
-		// else TargetLength = 22.0043;//cm
-	}
-	
+    TargetLength = 37;//cm
+    // if (targetType == "H") TargetLength = 21.2776;//cm
+    // else TargetLength = 22.0043;//cm
+  }
+
   if (GeomType == "Regular") TargetOffset = -TargetLength/2.;//cm
   if (GeomType == "SONIK" ) TargetOffset = 7.125;//cm
 
@@ -109,14 +109,14 @@ void CrossSectionManager::GenerateCrossSection() {
   int nLayers;
   InMgr->GetVariable("nLayers",nLayers);
 
-  //Trace beam through from entrance collimator & define energy for 
+  //Trace beam through from entrance collimator & define energy for
   //each target layer.
   vector <Double_t> elay(nLayers);
   Double_t ecurr = elab;
   Double_t eloss = (elab-elabmin)/nLayers;
   for (Int_t i=0; i<nLayers; i++) {
     ecurr = ecurr - eloss;
-    elay.at(i) = ecurr; 
+    elay.at(i) = ecurr;
   }
 
   double sigma_e;//beam energy sd
@@ -215,11 +215,11 @@ void CrossSectionManager::GenerateCrossSection() {
   Double_t dtheta      = (theta_maxcm-theta_mincm)/n_theta;
   Double_t dphi        = (phi_max-phi_min)/n_phi;
 
-  if (theta_min < -90 || theta_max > 90) { 
-    cerr << "Illegal theta range chosen. Probabilty of scattering < 0" << endl; 
+  if (theta_min < -90 || theta_max > 90) {
+    cerr << "Illegal theta range chosen. Probabilty of scattering < 0" << endl;
     exit(1);
   }
- 
+
   //Creates histo of cs for every E & theta within z limits
   hEtheta = TH2F("E vs theta","E vs theta",n_ebin_lim,e_min_lim,e_max_lim,n_theta,theta_mincm,theta_maxcm);
   hEtheta.SetOption("COLZ");
@@ -256,7 +256,7 @@ void CrossSectionManager::GenerateCrossSection() {
       else if (cx_type=="resonance_exp") xadd = res_exp(ecm,thetacm)* dtheta* TMath::Sin(thetacm)*dphi;//fm2, 10mb
       else if (cx_type=="rutherford") {
         xadd = ruth(z[BEAM],z[TARGET],ecm,thetacm)* dtheta* TMath::Sin(thetacm)*dphi;//fm2, 10mb
-//        cout << "\t" << ruth(z[BEAM],z[TARGET],ecm,thetacm) << endl;
+        //        cout << "\t" << ruth(z[BEAM],z[TARGET],ecm,thetacm) << endl;
       }
       else {
         cerr << "Error in <CrossSectionManager::CrossSectionManager>: Invalid cross section type" << endl;
@@ -273,7 +273,7 @@ void CrossSectionManager::GenerateCrossSection() {
     //number of expeted scattering events from one incident beam ion
     double pscat = dcsdE * Narea * hEpdf.GetBinContent(j+ebin_min) * 1.e-26;
     hEscat.SetBinContent(j,pscat);
- 
+
   }
 
   time = clock(); //for calculating ETA
@@ -282,10 +282,10 @@ void CrossSectionManager::GenerateCrossSection() {
   n_scat = hEscat.Integral()*6.25e9*mcFac;//total number of scattering events in limits
 
   gRandom->SetSeed(0);
-  
+
   //cout << "\n" << elab-(((z_max+z_min)/2)*eloss_tot/TargetLength) << endl; //beam energy at observation point, used in kinematics calculations
   KinMgr->SetEbeam(elab-(((z_max+z_min)/2)*eloss_tot/TargetLength));
-  
+
 }
 
 //---------------------------------------------------------------------------------
@@ -301,14 +301,14 @@ bool CrossSectionManager::GenerateEvent() {
 
 
   if (EventCount%10000 == 0)
-  {
-    if ((EventCount+3)%100000 == 0)
     {
-       time = clock();
-       prev_count = EventCount;
+      if ((EventCount+3)%100000 == 0)
+        {
+          time = clock();
+          prev_count = EventCount;
+        }
+      cout << "\n" << "\033[J" << "Estimated time to completion: "<< (int)((clock()-time)*(n_scat-EventCount)/((EventCount-prev_count)*CLOCKS_PER_SEC*60)) << " minutes" << "\033[F";
     }
-    cout << "\n" << "\033[J" << "Estimated time to completion: "<< (int)((clock()-time)*(n_scat-EventCount)/((EventCount-prev_count)*CLOCKS_PER_SEC*60)) << " minutes" << "\033[F";
-  }
 
   if (pdone%10 == 0 && pdone>pdone_prev) cout << pdone << "%" << "\n" << "\033[J";
   if (EventCount == int(n_scat)) cout << "100%" << "\n" << "\033[J";
@@ -367,12 +367,12 @@ bool CrossSectionManager::GenerateEvent() {
 // Calculates a resonant cross section using R matrix fit input
 double CrossSectionManager::res(Double_t ecm, Double_t theta_cm) {
 
-  Double_t thetaDeg = theta_cm * 180. / TMath::Pi(); 
+  Double_t thetaDeg = theta_cm * 180. / TMath::Pi();
 
   static ResonanceCalculator rc(cxFile.c_str());
 
   if(rc.good())
-    return rc.Calculate(ecm, thetaDeg) / 10.;//fm^2/sr  
+    return rc.Calculate(ecm, thetaDeg) / 10.;//fm^2/sr
   else
     exit(1);
 
@@ -393,7 +393,7 @@ double CrossSectionManager::res_exp(Double_t ecm, Double_t theta_cm) {
 
 //Rutherford cross-section
 double CrossSectionManager::ruth(Double_t z_a,Double_t z_b, Double_t ecm, Double_t theta_cm) {
-//  cout << z_a << "\t" << z_b << "\t" << ecm << "\t" << theta_cm << endl;
+  //  cout << z_a << "\t" << z_b << "\t" << ecm << "\t" << theta_cm << endl;
   double dsig = 1.296*pow(z_a*z_b/ecm,2)*TMath::Power(TMath::Sin(theta_cm/2.),-4)/10.;//fm^2/sr
   return dsig;
 }
