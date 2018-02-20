@@ -1,9 +1,0 @@
-#include "HistoManager.hh"
-#include "CrossSectionManager.hh"
-
-int g_count;
-double g_length = 37.;//length of gas target in cm
-bool g_hit;
-
-HistoManager g_HisMgr;
-CrossSectionManager g_CSMgr;

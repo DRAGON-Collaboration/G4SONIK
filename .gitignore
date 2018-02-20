@@ -1,0 +1,8 @@
+*~
+*.*~
+emacs_autosaves
+*.root
+rootfiles
+*.so
+*.d
+copies
