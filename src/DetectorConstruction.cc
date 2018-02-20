@@ -56,7 +56,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
 
   Target = new G4Material("Target", targetZ, double(targetA)*g/mole, targetDen*kg/m3);
 
-//  cout << targetA << endl;
+  //  cout << targetA << endl;
 
   //------------------------------------------------------ volumes
 
@@ -102,7 +102,7 @@ void DetectorConstruction::ConstructSONIK() {
   InMgr->GetVariable("z_origin",Origin_z);
   Origin_z*=cm;
 
-  //------------------------------ Main Cylinder 
+  //------------------------------ Main Cylinder
 
   G4double MainCyl_CaseDiam = 30.*mm;
   G4double MainCyl_CaseDepth = TargetLength*cm;
@@ -116,12 +116,12 @@ void DetectorConstruction::ConstructSONIK() {
   mainCyl_log->SetVisAttributes(MainCyl_VisAtt);
 
   //------------------------------ Lower Tube + Aperture + Upper Tube + Collimator
-  
+
   G4double TubeLower_Diam = 15.*mm;
-  
+
   G4double Aperture_dist = 61.588*mm;
-  G4double Aperture_Width = 2.*mm;  
-  G4double Aperture_Length = 10.*mm; 
+  G4double Aperture_Width = 2.*mm;
+  G4double Aperture_Length = 10.*mm;
   G4double Aperture_Depth = 3.175*mm;
   G4double Aperture_Diam = 2.*mm;
   G4double Aperture_Offset = -0.02*mm;
@@ -146,8 +146,8 @@ void DetectorConstruction::ConstructSONIK() {
     G4Tubs* TubeLower_Cyl = new G4Tubs("LowerTube",0.,TubeLower_Diam/2.,Aperture_dist/2.,0.,360.*deg);
     G4Tubs* Aperture_Cyl = new G4Tubs("Aperture_Cyl",0.,Aperture_Diam/2.,Aperture_Depth/2.,0.,360.*deg);
     G4Box* Aperture_Box = new G4Box("Aperture_Box",Aperture_Length/2.,Aperture_Width/2.,Aperture_Depth/2.);
-    G4UnionSolid* Aperture_Union = new G4UnionSolid("Aperture_Union",Aperture_Box, Aperture_Cyl,0,G4ThreeVector(Aperture_Length/2.+Aperture_Offset,0,0)); 
-    G4UnionSolid* Aperture_Union2 = new G4UnionSolid("Aperture_Union2",Aperture_Union,Aperture_Cyl,0,G4ThreeVector(-Aperture_Length/2.-Aperture_Offset,0,0)); 
+    G4UnionSolid* Aperture_Union = new G4UnionSolid("Aperture_Union",Aperture_Box, Aperture_Cyl,0,G4ThreeVector(Aperture_Length/2.+Aperture_Offset,0,0));
+    G4UnionSolid* Aperture_Union2 = new G4UnionSolid("Aperture_Union2",Aperture_Union,Aperture_Cyl,0,G4ThreeVector(-Aperture_Length/2.-Aperture_Offset,0,0));
     G4Tubs* TubeUpper_Cyl = new G4Tubs("TubeUpper_Cyl",0.,Tube_Diam/2.,Tube_Length/2.,0.,360.*deg);
     G4Tubs* SiCol_Cyl = new G4Tubs("SiCol_Cyl",0.,SiCol_Diam/2.,SiCol_Depth/2.,0.,360.*deg);
 
@@ -193,7 +193,7 @@ void DetectorConstruction::ConstructSONIK() {
     SiCol_log->SetVisAttributes(SiCol_VisAtt);
 
   }
-/*
+  /*
   //------------------------------ Cylinder Collimators     //still need to create proper rotation matrix for G4PVPlacement
 
   G4double CylCol_OuterDiam = 30.*mm;
@@ -201,13 +201,13 @@ void DetectorConstruction::ConstructSONIK() {
   G4double CylCol_InnerDiam = 4.*mm;
 
   G4Tubs* CylCol_Tub = new G4Tubs("CylCol_Tub",CylCol_InnerDiam/2.,CylCol_OuterDiam/2.,CylCol_Depth/2.,0.,360.*deg);
-  
+
   G4LogicalVolume* CylCol_log = new G4LogicalVolume(CylCol_Tub,Al,"CylCol_Tub",0,0,0);
 
   G4VisAttributes * CylCol_VisAtt = new G4VisAttributes(G4Colour(1.,0.,0.));
   CylCol_VisAtt->SetForceWireframe(true);
   CylCol_log->SetVisAttributes(CylCol_VisAtt);
-  
+
   CylCol01_phys = new G4PVPlacement(0,G4ThreeVector(0,0,Origin_z-10.4*cm-MainCyl_CaseDepth/2.),CylCol_log,"CylCol_Tub",mainCyl_log,false,0);
   CylCol02_phys = new G4PVPlacement(0,G4ThreeVector(0,0,Origin_z+5.85*cm-MainCyl_CaseDepth/2.),CylCol_log,"CylCol_Tub",mainCyl_log,false,0);
 
@@ -218,16 +218,16 @@ void DetectorConstruction::ConstructSONIK() {
   G4double GasCol_InnerDiam = 4.*mm;
 
   G4Tubs* GasCol_Tub = new G4Tubs("GasCol_Tub",GasCol_InnerDiam/2.,GasCol_OuterDiam/2.,GasCol_Depth/2.,0.,360.*deg);
-  
+
   G4LogicalVolume* GasCol_log = new G4LogicalVolume(GasCol_Tub,Al,"GasCol_Tub",0,0,0);
 
   G4VisAttributes * GasCol_VisAtt = new G4VisAttributes(G4Colour(1.,0.,0.));
   GasCol_VisAtt->SetForceWireframe(true);
   GasCol_log->SetVisAttributes(GasCol_VisAtt);
-  
+
   CylCol01_phys = new G4PVPlacement(0,G4ThreeVector(0,0,Origin_z-10.4*cm-(4.*cm + (GasCol_Depth/2.))-MainCyl_CaseDepth/2.),GasCol_log,"GasCol_Tub",mainCyl_log,false,0);
   CylCol02_phys = new G4PVPlacement(0,G4ThreeVector(0,0,Origin_z+5.85*cm+(4.*cm + (GasCol_Depth/2.))-MainCyl_CaseDepth/2.),GasCol_log,"GasCol_Tub",mainCyl_log,false,0);
-*/
+  */
   //------------------------------ Si detectors
 
   const string Det[13] = {"1","2","3","4","5","6","7","8","9","10","11","12","13"};
@@ -277,7 +277,7 @@ void DetectorConstruction::ConstructRegular() {
   experimentalHall_log  = new G4LogicalVolume(experimentalHall_box,Target,"expHall_log",0,0,0);
   experimentalHall_phys = new G4PVPlacement(0,G4ThreeVector(),experimentalHall_log,"expHall",0,false,0);
 
-//--------Si detector
+  //--------Si detector
   //position on beam axis where normal vector to detector face intersects (origin)
   Double_t Si00_xorigin = 0.*cm;
   Double_t Si00_yorigin = 0.*cm;
@@ -290,7 +290,7 @@ void DetectorConstruction::ConstructRegular() {
   Double_t Si_Diam     = 1.*cm;
   //distance between centre of detector face and origin
   Double_t Si00_dist   = 6.73*cm;
-//  Double_t Si00_dist   = 6.85*cm;
+  //  Double_t Si00_dist   = 6.85*cm;
   //detector colimator thickness
   G4double SiCol_Depth = 0.079*cm;
   //geometric centre of detector position
@@ -341,8 +341,8 @@ void DetectorConstruction::ConstructRegular() {
   SiCol_VisAtt->SetForceWireframe(true);
   SiCol2_log->SetVisAttributes(SiCol_VisAtt);
 
-//--------Colimator plane
-//colimator that sits on ridge in chamber, not the detector colimator
+  //--------Colimator plane
+  //colimator that sits on ridge in chamber, not the detector colimator
 
   G4double col_depth = 0.07*cm;
 
@@ -354,7 +354,7 @@ void DetectorConstruction::ConstructRegular() {
 
   G4PVPlacement* col_phys = new G4PVPlacement(0,G4ThreeVector(0.,col_offset-col_depth/2.,0.),col_log,"col",experimentalHall_log,false,0);
 
-//--------Colimator hole
+  //--------Colimator hole
 
   G4double col_diam = 0.5*cm;
   G4double col_length = 0.5*cm;
@@ -367,9 +367,9 @@ void DetectorConstruction::ConstructRegular() {
 
   G4Box* col2_Box = new G4Box("col2_Box",col_length/2.,col_width/2.,col_depth/2.);
 
-  G4UnionSolid* col_Union = new G4UnionSolid("col_Union",col2_Box, col_Cyl,0,G4ThreeVector(col_length/2.+0.02*cm,0,0)); 
+  G4UnionSolid* col_Union = new G4UnionSolid("col_Union",col2_Box, col_Cyl,0,G4ThreeVector(col_length/2.+0.02*cm,0,0));
 
-  G4UnionSolid* col_Union2 = new G4UnionSolid("col_Union2",col_Union,col_Cyl,0,G4ThreeVector(-col_length/2.-0.02*cm,0,0)); 
+  G4UnionSolid* col_Union2 = new G4UnionSolid("col_Union2",col_Union,col_Cyl,0,G4ThreeVector(-col_length/2.-0.02*cm,0,0));
 
   G4LogicalVolume* col2_log = new G4LogicalVolume(col_Union2,Target,"col_Union2",0,0,0);
 
