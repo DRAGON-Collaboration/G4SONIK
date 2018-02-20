@@ -27,9 +27,9 @@ scat config.dat SONIK.dat
 
 - Output files are `Events0.root`, `Table0.tsv` (or whatever specified in `config.dat`), `CS.root` (generated cross-section and beam profiles), `Kin.root` (generated kinematics solutions), and `currentEvent.rndm`, `currentRun.rndm` (pseudoRNG seeds)
 
-- To disable multiple scattering, comment out line 243, 248 in `src/PhysicsList.cc`:
+- To disable multiple scattering, comment out lines 234, 242 and 247 in `src/PhysicsList.cc`:
 ```
-pmanager->AddProcess(new G4hMultipleScattering, -1, 1, 1); }
+pmanager->AddProcess(new G4hMultipleScattering, -1, 1, 1);
 ```
 ___
 
