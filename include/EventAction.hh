@@ -20,20 +20,18 @@ class G4Event;
 
 class EventAction : public G4UserEventAction {
 
-  public:
-    EventAction(TreeManager* aTMgr, CrossSectionManager* aCSMgr);
-   ~EventAction();
+public:
+  EventAction(TreeManager* aTMgr, CrossSectionManager* aCSMgr);
+  ~EventAction();
 
-  public:
-    void BeginOfEventAction(const G4Event*);
-    void EndOfEventAction(const G4Event*);
+public:
+  void BeginOfEventAction(const G4Event*);
+  void EndOfEventAction(const G4Event*);
 
-  private:
-    TreeManager* TMgr;
-    CrossSectionManager* CSMgr;
+private:
+  TreeManager* TMgr;
+  CrossSectionManager* CSMgr;
 
 };
 
 #endif
-
-    

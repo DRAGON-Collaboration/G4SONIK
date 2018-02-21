@@ -1,4 +1,3 @@
-
 #ifndef TrackerSD_h
 #define TrackerSD_h 1
 
@@ -25,7 +24,7 @@ class G4HCofThisEvent;
 
 class TrackerSD : public G4VSensitiveDetector {
 
-  public:
+public:
   TrackerSD(G4String, TreeManager* aTMgr, InputManager* aInMgr, const char* aDetAngle);
   ~TrackerSD();
 
@@ -33,8 +32,8 @@ class TrackerSD : public G4VSensitiveDetector {
   G4bool ProcessHits(G4Step*, G4TouchableHistory*);
   void EndOfEvent(G4HCofThisEvent*);
   double GetCopynum();
-  
-  private:
+
+private:
   G4ParticleTable* particleTable;
   G4double Ion_A, Ion_Z, Ion2_A, Ion2_Z;
 
@@ -48,4 +47,3 @@ class TrackerSD : public G4VSensitiveDetector {
 };
 
 #endif
-

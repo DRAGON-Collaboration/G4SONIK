@@ -1,4 +1,3 @@
-
 #ifndef DetectorConstruction_H
 #define DetectorConstruction_H 1
 
@@ -28,10 +27,9 @@ class G4VPhysicalVolume;
 
 class DetectorConstruction : public G4VUserDetectorConstruction {
 
-  public:
-
+public:
     DetectorConstruction(TreeManager* aTMgr, CrossSectionManager* aCSMgr, InputManager* aInMgr);
-   ~DetectorConstruction();
+    ~DetectorConstruction();
 
     G4VPhysicalVolume* Construct();
     void ConstructSONIK();
@@ -39,8 +37,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction {
     void SetTargetLength(double len);
     void SetTargetOffset(double offset);//cm
 
-  private:
-    
+private:
     // Logical volumes
     G4LogicalVolume* experimentalHall_log;
     G4LogicalVolume* mainCyl_log;
@@ -72,4 +69,3 @@ class DetectorConstruction : public G4VUserDetectorConstruction {
 };
 
 #endif
-

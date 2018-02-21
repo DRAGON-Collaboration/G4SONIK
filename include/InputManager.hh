@@ -17,14 +17,14 @@ using namespace std;
 
 class InputManager {
 
-  public:
+public:
   InputManager();
- ~InputManager();
+  ~InputManager();
   void ReadFile(const char* afilename);
   template <class T>
   void GetVariable(string aname,T& value);
 
-  private:
+private:
   const char* filename;
   std::map <string,string> config_var;
   std::map <string,string>::iterator it;

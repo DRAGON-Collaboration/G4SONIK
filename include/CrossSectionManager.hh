@@ -39,10 +39,9 @@
 
 class CrossSectionManager {
 
-  public:
-
+public:
   CrossSectionManager(InputManager* aInMgr);
- ~CrossSectionManager();
+  ~CrossSectionManager();
 
   void GenerateCrossSection();
   bool GenerateEvent();
@@ -69,8 +68,7 @@ class CrossSectionManager {
   double res_exp(Double_t ecm, Double_t thetacm);
   double ruth(Double_t z_a, Double_t z_b, Double_t ecm, Double_t thetacm);
 
-  private:
-
+private:
   double Rcl_theta_lab, phi, theta_cm/*rad*/, Rcl_E_lab/*MeV*/, Beam_E_cm, n_scat/*total number of scattering events*/;
   double Ejc_theta_lab/*rad*/, Ejc_E_lab/*MeV*/, n_beam/*total number of scattering events*/; /////////////////////////////
   double zmin, zmax;//beam axis limits (cm)
@@ -98,7 +96,7 @@ class CrossSectionManager {
   TH2F hEtheta;//contains cs data for all energy and theta bins
   TH1F hEscat;//scattering pdf for given energy
   TH1F hEscat_lim;
-  
+
   KinManager* KinMgr;
   InputManager* InMgr;
 

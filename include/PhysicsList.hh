@@ -1,8 +1,7 @@
-
 // $Id: ExN01PhysicsList.hh,v 1.13.6.1 2010/04/01 09:18:54 gcosmo Exp $
 // GEANT4 tag $Name: geant4-09-03-patch-01 $
 //
-// 
+//
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -24,11 +23,10 @@ public:
   // Construct particle and physics
   void ConstructParticle();
   void ConstructProcess();
- 
-  void SetCuts();
-   
-private:
 
+  void SetCuts();
+
+private:
   // these methods Construct physics processes and register them
   void ConstructDecay();
   void ConstructEM();
@@ -37,6 +35,3 @@ private:
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #endif
-
-
-

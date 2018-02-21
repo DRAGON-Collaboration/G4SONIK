@@ -4,12 +4,13 @@
 #include <TGraph.h>
 #include <TMath.h>
 
+
 /// A class to facilitate calculation of resonant cross sections using interpolation.
 /// We are provided with cross section data at specific cm energies and angles, and want
 /// to calculate cross sections in between those points. The method used here is to use two
 /// spline interpolations, with the calculation handled by ROOT's TGraph::Eval() method.
-class ResonanceCalculator
-{
+class ResonanceCalculator {
+
 private:
   /// These maps basically allow look-up of plots of either energy vs. cx (at fixed angles)
   /// or angle vs. cx (at fixed energies).
@@ -18,28 +19,27 @@ private:
   bool isGood; //< tells whether the constructor succeded in reading the cross-section data file
 
 public:
-  bool good() {
-    return isGood;
-  }
+  bool good() { return isGood; }
 
   /// Constructor, read in a file and populate two sets of graphs:
   ///    1) energy vs. cross section at fixed angles
   ///    2) angle vs. cross section at fixed energies
   /// The filename should be 3-collumn:
   /// energy (MeV)    angle (degrees)    cross section (mb/sr)
+
+  ///curently switched to energy(MeV)	ignore1		angle(deg)	ignore2		crosssection(b/sr)
   ResonanceCalculator(const char* filename) {
     std::ifstream ifs(filename);
     if(!ifs.good()) {
       std::cerr << "Error in <ResonanceCalculator::ResonanceCalculator>: Invalid input file " << filename <<"\n\n";
       isGood = false;
-    }
-    else {
+    } else {
       isGood = true;
-      ///
-      double energy, angle, cross;
+      double energy, ignore1, angle, cross, ignore2;
       std::map<Double_t, TGraph*>::iterator it;
       while(1) {
-        ifs >> energy >> angle >> cross;
+        ifs >> energy >> ignore1 >> angle >> cross >> ignore2;
+        cross = 1000 * cross; // b/sr to mb/sr
         //        cout << energy << "\t" << angle << "\t" << cross << endl;
         if(!ifs.good()) break;
 

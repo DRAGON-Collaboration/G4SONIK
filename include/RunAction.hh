@@ -1,4 +1,3 @@
-
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -20,18 +19,17 @@ public:
 
   void BeginOfRunAction(const G4Run*);
   void   EndOfRunAction(const G4Run*);
-    
-  void fillPerEvent(G4double, G4double, G4double, G4double); 
+
+  void fillPerEvent(G4double, G4double, G4double, G4double);
 
 private:
   G4double sumEAbs, sum2EAbs;
   G4double sumEGap, sum2EGap;
-    
+
   G4double sumLAbs, sum2LAbs;
-  G4double sumLGap, sum2LGap;    
+  G4double sumLGap, sum2LGap;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #endif
-

@@ -18,9 +18,7 @@ private:
   bool isGood; //< tells whether the constructor succeded in reading the cross-section data file
 
 public:
-  bool good() {
-    return isGood;
-  }
+  bool good() { return isGood; }
 
   /// Constructor, read in a file and populate two sets of graphs:
   ///    1) energy vs. cross section at fixed angles

@@ -13,13 +13,13 @@
 
 class ResultsManager {
 
-  public:
+public:
   ResultsManager(InputManager* aInMgr);
- ~ResultsManager();
+  ~ResultsManager();
   void CreateTable();
 
-  private:
-  TFile *f;  
+private:
+  TFile *f;
   InputManager *InMgr;
 
 };

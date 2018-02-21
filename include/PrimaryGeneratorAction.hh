@@ -38,16 +38,15 @@ class G4ParticleGun;
 class G4Event;
 
 class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction {
-  
-  public:
+
+public:
   PrimaryGeneratorAction(TreeManager* aTMgr, CrossSectionManager* aCSMgr, InputManager* aInMgr);
- ~PrimaryGeneratorAction();
+  ~PrimaryGeneratorAction();
 
   void GeneratePrimaries(G4Event* anEvent);
   void IonBeam(G4Event* anEvent);
 
-  private:
-  
+private:
   string GeomType;
   int EventCounts;
 
@@ -59,9 +58,7 @@ class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction {
   InputManager* InMgr;
 
   G4double Target_Ion_A, Target_Ion_Z, Beam_Ion_A, Beam_Ion_Z;
-  
+
 };
 
 #endif
-
-

@@ -12,9 +12,7 @@ private:
   bool isGood; //< tells whether the constructor succeded in reading the cross-section data file
 
 public:
-  bool good() {
-    return isGood;
-  }
+  bool good() { return isGood; }
 
   /// The filename should be 3-collumn:
   /// cm energy (MeV)    cm angle (degrees)    cm cross section (mb/sr)

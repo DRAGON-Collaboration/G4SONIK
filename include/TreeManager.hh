@@ -1,4 +1,3 @@
-
 #ifndef TreeManager_h
 #define TreeManager_h 1
 
@@ -12,10 +11,9 @@
 
 class TreeManager {
 
-  public:
-
+public:
   TreeManager(InputManager* aInMgr);
- ~TreeManager();
+  ~TreeManager();
 
   void DetRclEvent(const char* aDetAngle);
   void DetEjcEvent(const char* aDetAngle);
@@ -42,8 +40,7 @@ class TreeManager {
   void Set1E_beam(double E_beam);
 
 
-  private:
-
+private:
   struct DataD {
     Float_t E_dep;
     Float_t E_lab;
@@ -57,7 +54,7 @@ class TreeManager {
   };
 
   TFile* file;
-  
+
   DataD dataX;
   DataD data0;
   DataD data1;

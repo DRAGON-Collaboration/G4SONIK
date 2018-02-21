@@ -6,8 +6,7 @@
 using namespace std;
 
 class KinManager {
-  public:
-  
+public:
   KinManager(double m_a, double m_A);
   ~KinManager();
 
@@ -17,8 +16,7 @@ class KinManager {
   double GetE_b(double theta_cm);   //Ejc_E_lab = E_b
   double GetE_B(double theta_cm);   //Rcl_E_lab = E_B
 
-  private:
-
+private:
   double E_b, change, gamma, s, theta, theta_cm, E_B;
 
 };
